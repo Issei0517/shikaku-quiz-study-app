@@ -3,7 +3,7 @@
   <head>
     <meta charset="UTF-8" />
     <meta name="viewport" content="width=device-width, initial-scale=1.0" />
-    <title>資格問題アプリ</title>
+    <title>資格勉強アプリ</title>
     <link rel="preconnect" href="https://fonts.googleapis.com" />
     <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin />
     <link
@@ -13,77 +13,66 @@
     <link rel="stylesheet" href="./styles.css" />
   </head>
   <body>
+    <div class="backdrop backdrop-left"></div>
+    <div class="backdrop backdrop-right"></div>
     <div class="page">
-      <header class="hero">
-        <div>
-          <p class="eyebrow">CSVで管理する資格学習アプリ</p>
-          <h1>年度別・カテゴリ別に過去問を回せる4択トレーナー</h1>
-          <p class="lead">
-            問題CSVを差し替えるだけで学習セットを更新できます。要復習チェックを付けた問題だけに絞って反復できます。
-          </p>
-        </div>
-        <div class="uploadCard">
-          <label class="uploadLabel" for="csv-upload">CSVを読み込む</label>
-          <input id="csv-upload" type="file" accept=".csv" />
-          <p id="source-label">現在のデータ: サンプルCSV</p>
-          <p class="hint">
-            必須列: id, year, category, question, choice1, choice2, choice3, choice4,
-            answer, explanation
-          </p>
-        </div>
-      </header>
+      <section class="homeView">
+        <header class="hero">
+          <div class="heroCopy">
+            <p class="eyebrow">CSVで管理する資格勉強アプリ</p>
+            <h1>資格勉強アプリ</h1>
+            <p class="lead">
+              過去問CSVを読み込むだけで学習セットを切り替えできます。年度やカテゴリで絞り込み、要復習だけを集中的に回せます。
+            </p>
+            <div class="heroMetrics">
+              <article class="metricCard">
+                <span class="metricLabel">総問題数</span>
+                <strong id="hero-total-count">0</strong>
+              </article>
+              <article class="metricCard">
+                <span class="metricLabel">表示中</span>
+                <strong id="hero-visible-count">0</strong>
+              </article>
+              <article class="metricCard">
+                <span class="metricLabel">要復習</span>
+                <strong id="hero-review-count">0</strong>
+              </article>
+            </div>
+            <div class="heroActions">
+              <a href="./quiz.html" class="buttonPrimary heroStartButton buttonLink">
+                問題をスタート
+              </a>
+            </div>
+          </div>
+          <div class="uploadCard">
+            <div class="uploadHeader">
+              <p>DATA SOURCE</p>
+              <span>CSV INPUT</span>
+            </div>
+            <label class="uploadLabel" for="csv-upload">CSVを追加で読み込む</label>
+            <input id="csv-upload" type="file" accept=".csv" />
+            <p id="source-label">現在のデータ: 自動読込フォルダ</p>
+            <p class="hint">
+              必須列: id, year, category, question, choice1, choice2, choice3, choice4,
+              answer, explanation
+            </p>
+          </div>
+        </header>
 
-      <section class="controls">
-        <label>
-          年度
-          <select id="year-filter"></select>
-        </label>
-        <label>
-          カテゴリ
-          <select id="category-filter"></select>
-        </label>
-        <label class="checkbox">
-          <input id="review-only" type="checkbox" />
-          要復習だけ表示
-        </label>
-      </section>
-
-      <section class="statusBar">
-        <div><strong id="hit-count">0</strong> 問ヒット</div>
-        <div>要復習 <strong id="review-count">0</strong> 問</div>
-      </section>
-
-      <p id="error-message" class="error" hidden></p>
-
-      <section id="empty-state" class="emptyState" hidden>
-        <h2>表示できる問題がありません</h2>
-        <p>条件を緩めるか、要復習チェック済みの問題を追加してください。</p>
-      </section>
-
-      <section id="quiz-card" class="quizCard" hidden>
-        <div class="quizMeta">
-          <span id="meta-year"></span>
-          <span id="meta-category"></span>
-          <span id="meta-index"></span>
-        </div>
-
-        <div class="questionHeader">
-          <h2 id="question-text"></h2>
-          <button id="review-toggle" type="button" class="star"></button>
-        </div>
-
-        <div id="choices" class="choices"></div>
-
-        <div class="actions">
-          <button id="prev-button" type="button">前へ</button>
-          <button id="submit-button" type="button">回答する</button>
-          <button id="next-button" type="button">次へ</button>
-        </div>
-
-        <div id="result-panel" class="result" hidden>
-          <p id="result-text"></p>
-          <p id="explanation-text"></p>
-        </div>
+        <section class="entryPanel">
+          <article class="entryCard">
+            <h2>開始前にできること</h2>
+            <p>問題データは起動時点で読み込み済みです。必要ならCSVを追加してからスタートできます。</p>
+          </article>
+          <article class="entryCard">
+            <h2>学習モード</h2>
+            <p>年度・カテゴリ・要復習の条件を変えながら、自分に必要な問題だけに絞って進められます。</p>
+          </article>
+          <article class="entryCard">
+            <h2>対応データ</h2>
+            <p>現在は常時読込フォルダから一般問題と消防法乙四サンプルを読み込んでいます。</p>
+          </article>
+        </section>
       </section>
     </div>
 

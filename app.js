@@ -11,6 +11,25 @@ const REQUIRED_COLUMNS = [
   "explanation",
 ];
 const STORAGE_KEY = "quiz-study-review-flags";
+const AUTOLOAD_MANIFEST_PATH = "./public/csv/index.json";
+const EMBEDDED_AUTOLOAD_FILES = {
+  "questions.csv": `id,year,category,question,choice1,choice2,choice3,choice4,answer,explanation
+nw-2024-01,2024,ネットワーク,"OSI参照モデルでルータが主に動作する層はどれか。",物理層,データリンク層,ネットワーク層,トランスポート層,3,"ルータはIPアドレスを見て経路制御するため、主にネットワーク層で動作します。"
+db-2024-02,2024,データベース,"主キーの説明として最も適切なものはどれか。",表の行を一意に識別する列,必ず数値型になる列,外部表だけに存在する列,更新できない列,1,"主キーは各行を重複なく識別するための列です。"
+sec-2023-03,2023,セキュリティ,"二要素認証の要素の組み合わせとして適切なものはどれか。",IDとパスワード,パスワードと秘密の質問,ICカードと暗証番号,メールアドレスと氏名,3,"二要素認証では知識・所持・生体など異なる要素を組み合わせます。"
+pm-2023-04,2023,マネジメント,"WBSの主な目的はどれか。",障害発生時の責任追及,作業の分解と管理,ネットワーク監視,契約書の自動作成,2,"WBSは作業を階層的に分解し、スケジュールや進捗を管理しやすくします。"`,
+  "otsu4-sample.csv": `id,year,category,question,choice1,choice2,choice3,choice4,answer,explanation
+otsu4-001,乙四,基礎,"燃焼の成立に必要な3要素の組合せとして正しいものはどれか。",可燃物・酸素供給源・点火源,水・空気・光,窒素・可燃物・蒸気,可燃物・二酸化炭素・点火源,1,"燃焼の3要素は可燃物、酸素供給源、点火源です。"
+otsu4-002,乙四,基礎,"第4類危険物の性質として最も適切なものはどれか。",水と反応して可燃性ガスを発生しやすい,引火性液体である,自己燃焼性が極めて高い,酸化性の固体である,2,"乙種第4類は引火性液体を対象とします。"
+otsu4-003,乙四,法令,"ガソリンの指定数量はどれか。",50L,100L,200L,500L,3,"ガソリンの指定数量は200Lです。"
+otsu4-004,乙四,法令,"製造所等に設ける消火設備の区分を決める主な要素として適切なものはどれか。",従業員の勤続年数,危険物の種類と取扱数量,建物の築年数のみ,事業所の売上高,2,"消火設備は危険物の性質、指定数量の倍数、建築物の構造などを基に区分されます。"
+otsu4-005,乙四,性状,"ガソリンの蒸気について正しいものはどれか。",空気より軽く上方に滞留しやすい,空気より重く低所に滞留しやすい,水に非常によく溶ける,不燃性である,2,"ガソリン蒸気は空気より重く、低い場所に滞留しやすい性質があります。"
+otsu4-006,乙四,性状,"灯油の性状として適切なものはどれか。",引火点はガソリンより低い,常温で激しく自己反応する,水に溶けにくい可燃性液体である,第1石油類に該当する,3,"灯油は水に溶けにくい可燃性液体で、第2石油類に分類されます。"
+otsu4-007,乙四,消火,"油火災に対する初期消火方法として適切なものはどれか。",大量の水を勢いよく注ぐ,泡消火剤や粉末消火剤を用いる,可燃物をかき混ぜる,容器のふたを開けて放熱する,2,"第4類危険物による火災には泡、粉末、二酸化炭素などの消火設備が有効です。"
+otsu4-008,乙四,法令,"製造所等の保安距離や保有空地を考える目的として適切なものはどれか。",景観を良くするため,周辺への延焼や災害拡大を防ぐため,従業員の休憩場所を確保するため,搬入車両を駐車しやすくするため,2,"保安距離や保有空地は、火災や爆発による周辺被害の拡大防止を目的とします。"
+otsu4-009,乙四,性状,"アルコール類の性状として適切なものはどれか。",すべて水に不溶である,水溶性のものが多い,引火の危険がない,蒸気は発生しない,2,"アルコール類は水溶性のものが多く、消火方法の判断でも重要です。"
+otsu4-010,乙四,法令,"危険物施設の点検や記録の目的として最も適切なものはどれか。",帳簿を増やすため,事故や漏えいを未然に防ぐため,税務申告を簡単にするため,商品の販売促進のため,2,"定期的な点検と記録は、設備不良や漏えいの早期発見につながり、事故防止に有効です。"`
+};
 
 const state = {
   questions: [],
@@ -26,6 +45,9 @@ const state = {
 
 const elements = {
   sourceLabel: document.getElementById("source-label"),
+  heroTotalCount: document.getElementById("hero-total-count"),
+  heroVisibleCount: document.getElementById("hero-visible-count"),
+  heroReviewCount: document.getElementById("hero-review-count"),
   csvUpload: document.getElementById("csv-upload"),
   yearFilter: document.getElementById("year-filter"),
   categoryFilter: document.getElementById("category-filter"),
@@ -38,6 +60,8 @@ const elements = {
   metaYear: document.getElementById("meta-year"),
   metaCategory: document.getElementById("meta-category"),
   metaIndex: document.getElementById("meta-index"),
+  progressText: document.getElementById("progress-text"),
+  progressFill: document.getElementById("progress-fill"),
   questionText: document.getElementById("question-text"),
   reviewToggle: document.getElementById("review-toggle"),
   choices: document.getElementById("choices"),
@@ -114,6 +138,16 @@ function parseCsv(csvText) {
   return questions;
 }
 
+function mergeQuestions(questionSets) {
+  const merged = new Map();
+
+  questionSets.flat().forEach((question) => {
+    merged.set(question.id, question);
+  });
+
+  return [...merged.values()];
+}
+
 function parseCsvLine(line) {
   const values = [];
   let current = "";
@@ -143,7 +177,17 @@ function parseCsvLine(line) {
 }
 
 function updateFilters() {
-  const years = [...new Set(state.questions.map((question) => question.year))];
+  if (!elements.yearFilter || !elements.categoryFilter) {
+    return;
+  }
+
+  const years = [
+    ...new Set(
+      state.questions
+        .map((question) => question.year)
+        .filter((year) => /^\d{4}$/.test(year)),
+    ),
+  ];
   const categories = [...new Set(state.questions.map((question) => question.category))];
 
   renderSelect(elements.yearFilter, years, state.selectedYear);
@@ -151,6 +195,10 @@ function updateFilters() {
 }
 
 function renderSelect(selectElement, items, selectedValue) {
+  if (!selectElement) {
+    return;
+  }
+
   selectElement.innerHTML = "";
   const allOption = document.createElement("option");
   allOption.value = "all";
@@ -194,13 +242,34 @@ function applyFilters() {
 }
 
 function render() {
-  elements.hitCount.textContent = String(state.filteredQuestions.length);
-  elements.reviewCount.textContent = String(
-    Object.values(state.reviewFlags).filter(Boolean).length,
-  );
-
+  const reviewCount = Object.values(state.reviewFlags).filter(Boolean).length;
+  const totalCount = state.questions.length;
+  const visibleCount = state.filteredQuestions.length;
   const currentQuestion = state.filteredQuestions[state.currentIndex];
-  elements.errorMessage.hidden = true;
+
+  if (elements.hitCount) {
+    elements.hitCount.textContent = String(visibleCount);
+  }
+  if (elements.reviewCount) {
+    elements.reviewCount.textContent = String(reviewCount);
+  }
+  if (elements.heroTotalCount) {
+    elements.heroTotalCount.textContent = String(totalCount);
+  }
+  if (elements.heroVisibleCount) {
+    elements.heroVisibleCount.textContent = String(visibleCount);
+  }
+  if (elements.heroReviewCount) {
+    elements.heroReviewCount.textContent = String(reviewCount);
+  }
+
+  if (elements.errorMessage) {
+    elements.errorMessage.hidden = true;
+  }
+
+  if (!elements.quizCard || !elements.emptyState) {
+    return;
+  }
 
   if (!currentQuestion) {
     elements.emptyState.hidden = false;
@@ -213,6 +282,11 @@ function render() {
   elements.metaYear.textContent = currentQuestion.year;
   elements.metaCategory.textContent = currentQuestion.category;
   elements.metaIndex.textContent = `${state.currentIndex + 1} / ${state.filteredQuestions.length}`;
+  const progress = Math.round(
+    ((state.currentIndex + 1) / Math.max(state.filteredQuestions.length, 1)) * 100,
+  );
+  elements.progressText.textContent = `${progress}%`;
+  elements.progressFill.style.width = `${progress}%`;
   elements.questionText.textContent = currentQuestion.question;
   elements.reviewToggle.textContent = state.reviewFlags[currentQuestion.id]
     ? "★ 要復習"
@@ -280,89 +354,154 @@ function escapeHtml(value) {
 }
 
 function showError(message) {
+  if (!elements.errorMessage) {
+    return;
+  }
+
   elements.errorMessage.textContent = message;
   elements.errorMessage.hidden = false;
 }
 
 function loadQuestions(questions, sourceLabel) {
   state.questions = questions;
-  elements.sourceLabel.textContent = `現在のデータ: ${sourceLabel}`;
+  if (elements.sourceLabel) {
+    elements.sourceLabel.textContent = `現在のデータ: ${sourceLabel}`;
+  }
   updateFilters();
   applyFilters();
 }
 
+async function loadAutoCsvFolder() {
+  try {
+    const manifestResponse = await fetch(AUTOLOAD_MANIFEST_PATH);
+    if (!manifestResponse.ok) {
+      throw new Error("自動読込フォルダの一覧を取得できませんでした。");
+    }
+
+    const manifest = await manifestResponse.json();
+    const files = Array.isArray(manifest.files) ? manifest.files : [];
+    if (files.length === 0) {
+      throw new Error("自動読込フォルダにCSVが設定されていません。");
+    }
+
+    const loadedSets = await Promise.all(
+      files.map(async (fileName) => {
+        const response = await fetch(`./public/csv/${fileName}`);
+        if (!response.ok) {
+          throw new Error(`${fileName} を取得できませんでした。`);
+        }
+        const text = await response.text();
+        return parseCsv(text);
+      }),
+    );
+
+    return {
+      questions: mergeQuestions(loadedSets),
+      label: `自動読込フォルダ (${files.length}ファイル)`,
+    };
+  } catch {
+    const embeddedFiles = Object.keys(EMBEDDED_AUTOLOAD_FILES);
+    const loadedSets = embeddedFiles.map((fileName) =>
+      parseCsv(EMBEDDED_AUTOLOAD_FILES[fileName]),
+    );
+
+    return {
+      questions: mergeQuestions(loadedSets),
+      label: `埋め込みデータ (${embeddedFiles.length}ファイル)`,
+    };
+  }
+}
+
 function attachEvents() {
-  elements.csvUpload.addEventListener("change", async (event) => {
-    const file = event.target.files && event.target.files[0];
-    if (!file) {
-      return;
-    }
+  if (elements.csvUpload) {
+    elements.csvUpload.addEventListener("change", async (event) => {
+      const file = event.target.files && event.target.files[0];
+      if (!file) {
+        return;
+      }
 
-    try {
-      const text = await file.text();
-      loadQuestions(parseCsv(text), file.name);
-    } catch (error) {
-      showError(error.message);
-    }
-  });
+      try {
+        const text = await file.text();
+        const uploadedQuestions = parseCsv(text);
+        const merged = mergeQuestions([state.questions, uploadedQuestions]);
+        loadQuestions(merged, `自動読込フォルダ + ${file.name}`);
+      } catch (error) {
+        showError(error.message);
+      }
+    });
+  }
 
-  elements.yearFilter.addEventListener("change", (event) => {
-    state.selectedYear = event.target.value;
-    applyFilters();
-  });
-
-  elements.categoryFilter.addEventListener("change", (event) => {
-    state.selectedCategory = event.target.value;
-    applyFilters();
-  });
-
-  elements.reviewOnly.addEventListener("change", (event) => {
-    state.reviewOnly = event.target.checked;
-    applyFilters();
-  });
-
-  elements.reviewToggle.addEventListener("click", () => {
-    const currentQuestion = state.filteredQuestions[state.currentIndex];
-    if (!currentQuestion) {
-      return;
-    }
-
-    state.reviewFlags[currentQuestion.id] = !state.reviewFlags[currentQuestion.id];
-    saveReviewFlags();
-    if (state.reviewOnly && !state.reviewFlags[currentQuestion.id]) {
+  if (elements.yearFilter) {
+    elements.yearFilter.addEventListener("change", (event) => {
+      state.selectedYear = event.target.value;
       applyFilters();
-      return;
-    }
-    render();
-  });
+    });
+  }
 
-  elements.submitButton.addEventListener("click", () => {
-    if (state.selectedChoice == null) {
-      return;
-    }
-    state.showResult = true;
-    render();
-  });
+  if (elements.categoryFilter) {
+    elements.categoryFilter.addEventListener("change", (event) => {
+      state.selectedCategory = event.target.value;
+      applyFilters();
+    });
+  }
 
-  elements.prevButton.addEventListener("click", () => {
-    if (state.currentIndex === 0) {
-      return;
-    }
-    state.currentIndex -= 1;
-    state.selectedChoice = null;
-    state.showResult = false;
-    render();
-  });
+  if (elements.reviewOnly) {
+    elements.reviewOnly.addEventListener("change", (event) => {
+      state.reviewOnly = event.target.checked;
+      applyFilters();
+    });
+  }
 
-  elements.nextButton.addEventListener("click", () => {
-    if (state.currentIndex >= state.filteredQuestions.length - 1) {
-      return;
-    }
-    state.currentIndex += 1;
-    state.selectedChoice = null;
-    state.showResult = false;
-    render();
-  });
+  if (elements.reviewToggle) {
+    elements.reviewToggle.addEventListener("click", () => {
+      const currentQuestion = state.filteredQuestions[state.currentIndex];
+      if (!currentQuestion) {
+        return;
+      }
+
+      state.reviewFlags[currentQuestion.id] = !state.reviewFlags[currentQuestion.id];
+      saveReviewFlags();
+      if (state.reviewOnly && !state.reviewFlags[currentQuestion.id]) {
+        applyFilters();
+        return;
+      }
+      render();
+    });
+  }
+
+  if (elements.submitButton) {
+    elements.submitButton.addEventListener("click", () => {
+      if (state.selectedChoice == null) {
+        return;
+      }
+      state.showResult = true;
+      render();
+    });
+  }
+
+  if (elements.prevButton) {
+    elements.prevButton.addEventListener("click", () => {
+      if (state.currentIndex === 0) {
+        return;
+      }
+      state.currentIndex -= 1;
+      state.selectedChoice = null;
+      state.showResult = false;
+      render();
+    });
+  }
+
+  if (elements.nextButton) {
+    elements.nextButton.addEventListener("click", () => {
+      if (state.currentIndex >= state.filteredQuestions.length - 1) {
+        return;
+      }
+      state.currentIndex += 1;
+      state.selectedChoice = null;
+      state.showResult = false;
+      render();
+    });
+  }
 }
 
 async function bootstrap() {
@@ -371,14 +510,10 @@ async function bootstrap() {
   render();
 
   try {
-    const response = await fetch("./public/questions.csv");
-    if (!response.ok) {
-      throw new Error("初期CSVを取得できませんでした。");
-    }
-    const text = await response.text();
-    loadQuestions(parseCsv(text), "サンプルCSV");
+    const autoLoaded = await loadAutoCsvFolder();
+    loadQuestions(autoLoaded.questions, autoLoaded.label);
   } catch {
-    showError("初期CSVを自動読込できませんでした。画面からCSVを選択してください。");
+    showError("CSVの初期データを読み込めませんでした。");
   }
 }
 
