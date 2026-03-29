@@ -13,11 +13,6 @@ const REQUIRED_COLUMNS = [
 const STORAGE_KEY = "quiz-study-review-flags";
 const AUTOLOAD_MANIFEST_PATH = "./public/csv/index.json";
 const EMBEDDED_AUTOLOAD_FILES = {
-  "questions.csv": `id,year,category,question,choice1,choice2,choice3,choice4,answer,explanation
-nw-2024-01,2024,ネットワーク,"OSI参照モデルでルータが主に動作する層はどれか。",物理層,データリンク層,ネットワーク層,トランスポート層,3,"ルータはIPアドレスを見て経路制御するため、主にネットワーク層で動作します。"
-db-2024-02,2024,データベース,"主キーの説明として最も適切なものはどれか。",表の行を一意に識別する列,必ず数値型になる列,外部表だけに存在する列,更新できない列,1,"主キーは各行を重複なく識別するための列です。"
-sec-2023-03,2023,セキュリティ,"二要素認証の要素の組み合わせとして適切なものはどれか。",IDとパスワード,パスワードと秘密の質問,ICカードと暗証番号,メールアドレスと氏名,3,"二要素認証では知識・所持・生体など異なる要素を組み合わせます。"
-pm-2023-04,2023,マネジメント,"WBSの主な目的はどれか。",障害発生時の責任追及,作業の分解と管理,ネットワーク監視,契約書の自動作成,2,"WBSは作業を階層的に分解し、スケジュールや進捗を管理しやすくします。"`,
   "otsu4-sample.csv": `id,year,category,question,choice1,choice2,choice3,choice4,answer,explanation
 otsu4-001,乙四,基礎,"燃焼の成立に必要な3要素の組合せとして正しいものはどれか。",可燃物・酸素供給源・点火源,水・空気・光,窒素・可燃物・蒸気,可燃物・二酸化炭素・点火源,1,"燃焼の3要素は可燃物、酸素供給源、点火源です。"
 otsu4-002,乙四,基礎,"第4類危険物の性質として最も適切なものはどれか。",水と反応して可燃性ガスを発生しやすい,引火性液体である,自己燃焼性が極めて高い,酸化性の固体である,2,"乙種第4類は引火性液体を対象とします。"
@@ -473,6 +468,15 @@ function attachEvents() {
     elements.submitButton.addEventListener("click", () => {
       if (state.selectedChoice == null) {
         return;
+      }
+      const currentQuestion = state.filteredQuestions[state.currentIndex];
+      if (
+        currentQuestion &&
+        state.selectedChoice !== currentQuestion.answer &&
+        !state.reviewFlags[currentQuestion.id]
+      ) {
+        state.reviewFlags[currentQuestion.id] = true;
+        saveReviewFlags();
       }
       state.showResult = true;
       render();

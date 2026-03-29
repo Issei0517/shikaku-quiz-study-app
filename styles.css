@@ -86,6 +86,28 @@ input {
   padding-top: 12px;
 }
 
+.homeView .hero {
+  grid-template-columns: 1fr;
+}
+
+.homeView .heroCopy {
+  max-width: 820px;
+  margin: 0;
+  text-align: left;
+}
+
+.homeView .eyebrow {
+  justify-self: start;
+}
+
+.homeView h1 {
+  max-width: none;
+}
+
+.homeView .lead {
+  margin-inline: 0;
+}
+
 .eyebrow {
   display: inline-flex;
   align-items: center;
@@ -125,6 +147,8 @@ h1 {
 
 .heroActions {
   margin-top: 28px;
+  display: flex;
+  justify-content: flex-start;
 }
 
 .heroStartButton {
@@ -164,6 +188,13 @@ h1 {
   margin: 10px 0 0;
   color: var(--muted);
   line-height: 1.8;
+}
+
+.homeUploadCard {
+  width: 100%;
+  max-width: none;
+  margin-top: 12px;
+  justify-self: stretch;
 }
 
 .metricCard {
@@ -461,18 +492,27 @@ h1 {
 }
 
 .questionHeader {
-  display: flex;
-  justify-content: space-between;
-  gap: 16px;
-  align-items: start;
+  width: min(100%, 700px);
+  margin: 24px auto 0;
+  padding: 0 4px;
+}
+
+.questionHeader {
   margin-top: 24px;
 }
 
 .questionHeader h2 {
   margin: 0;
-  max-width: 20ch;
+  max-width: none;
   font-size: clamp(1.55rem, 2.2vw, 2rem);
   line-height: 1.5;
+}
+
+.questionTools {
+  display: flex;
+  justify-content: flex-end;
+  width: min(100%, 700px);
+  margin: 14px auto 0;
 }
 
 .star {
@@ -493,7 +533,8 @@ h1 {
 .choices {
   display: grid;
   gap: 16px;
-  margin-top: 28px;
+  width: min(100%, 700px);
+  margin: 28px auto 0;
 }
 
 .choice {
@@ -551,7 +592,8 @@ h1 {
   display: flex;
   justify-content: space-between;
   gap: 12px;
-  margin-top: 24px;
+  width: min(100%, 700px);
+  margin: 24px auto 0;
 }
 
 .actions button {
@@ -589,7 +631,8 @@ h1 {
 }
 
 .result {
-  margin-top: 18px;
+  width: min(100%, 700px);
+  margin: 18px auto 0;
   padding: 20px 22px;
   border-radius: 22px;
   font-weight: 500;
@@ -619,8 +662,12 @@ h1 {
     grid-template-columns: 1fr;
   }
 
+  .homeUploadCard {
+    max-width: none;
+    justify-self: stretch;
+  }
+
   .quizHeaderBar,
-  .questionHeader,
   .actions {
     flex-direction: column;
   }

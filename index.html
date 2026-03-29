@@ -44,19 +44,6 @@
               </a>
             </div>
           </div>
-          <div class="uploadCard">
-            <div class="uploadHeader">
-              <p>DATA SOURCE</p>
-              <span>CSV INPUT</span>
-            </div>
-            <label class="uploadLabel" for="csv-upload">CSVを追加で読み込む</label>
-            <input id="csv-upload" type="file" accept=".csv" />
-            <p id="source-label">現在のデータ: 自動読込フォルダ</p>
-            <p class="hint">
-              必須列: id, year, category, question, choice1, choice2, choice3, choice4,
-              answer, explanation
-            </p>
-          </div>
         </header>
 
         <section class="entryPanel">
@@ -72,6 +59,20 @@
             <h2>対応データ</h2>
             <p>現在は常時読込フォルダから一般問題と消防法乙四サンプルを読み込んでいます。</p>
           </article>
+        </section>
+
+        <section class="uploadCard homeUploadCard">
+          <div class="uploadHeader">
+            <p>DATA SOURCE</p>
+            <span>CSV INPUT</span>
+          </div>
+          <label class="uploadLabel" for="csv-upload">CSVを追加で読み込む</label>
+          <input id="csv-upload" type="file" accept=".csv" />
+          <p id="source-label">現在のデータ: 自動読込フォルダ</p>
+          <p class="hint">
+            必須列: id, year, category, question, choice1, choice2, choice3, choice4,
+            answer, explanation
+          </p>
         </section>
       </section>
     </div>
