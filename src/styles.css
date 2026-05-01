@@ -1,0 +1,73 @@
+@tailwind base;
+@tailwind components;
+@tailwind utilities;
+
+@layer base {
+  * {
+    box-sizing: border-box;
+  }
+
+  body {
+    margin: 0;
+    min-width: 320px;
+    min-height: 100vh;
+    background: #f6f8fb;
+    color: #172033;
+    font-family: "Noto Sans JP", system-ui, sans-serif;
+  }
+
+  button,
+  input,
+  select {
+    font: inherit;
+  }
+}
+
+@layer components {
+  .panel {
+    @apply rounded-xl border border-app-line bg-white shadow-soft;
+  }
+
+  .button-primary {
+    @apply inline-flex h-11 items-center justify-center gap-2 rounded-md bg-app-primary px-5 text-sm font-bold text-white shadow-sm transition duration-200 hover:-translate-y-0.5 hover:bg-app-primaryStrong hover:shadow-panel active:translate-y-0;
+  }
+
+  .button-secondary {
+    @apply inline-flex h-11 items-center justify-center gap-2 rounded-md border border-app-line bg-white px-5 text-sm font-bold text-app-body transition duration-200 hover:-translate-y-0.5 hover:border-app-primary hover:text-app-primary active:translate-y-0;
+  }
+
+  .input-like {
+    @apply h-11 rounded-md border border-app-line bg-white px-3 text-sm text-app-body outline-none transition focus:border-app-primary focus:ring-4 focus:ring-app-primarySoft;
+  }
+
+  .page-shell {
+    @apply min-h-screen bg-app-bg text-app-text;
+  }
+
+  .page-content {
+    @apply animate-rise px-6 py-6 lg:px-8;
+  }
+
+  .muted-label {
+    @apply text-xs font-bold tracking-wide text-app-muted;
+  }
+
+  .metric-number {
+    @apply text-4xl font-extrabold tracking-tight text-app-text;
+  }
+}
+
+.progress-fill {
+  transform-origin: left;
+  animation: stretch 780ms cubic-bezier(0.2, 0.8, 0.2, 1) both;
+}
+
+@media (prefers-reduced-motion: reduce) {
+  *,
+  *::before,
+  *::after {
+    animation-duration: 1ms !important;
+    scroll-behavior: auto !important;
+    transition-duration: 1ms !important;
+  }
+}
