@@ -7,19 +7,56 @@
     box-sizing: border-box;
   }
 
+  html {
+    min-height: 100%;
+    background: #f6f8fb;
+    -webkit-text-size-adjust: 100%;
+  }
+
   body {
     margin: 0;
     min-width: 320px;
     min-height: 100vh;
+    min-height: 100dvh;
     background: #f6f8fb;
     color: #172033;
-    font-family: "Noto Sans JP", system-ui, sans-serif;
+    font-family: "Noto Sans JP", -apple-system, BlinkMacSystemFont, "Hiragino Sans", "Yu Gothic", system-ui, sans-serif;
+    overscroll-behavior-y: none;
+    -webkit-tap-highlight-color: transparent;
+  }
+
+  #root {
+    min-height: 100vh;
+    min-height: 100dvh;
   }
 
   button,
   input,
-  select {
+  select,
+  textarea {
     font: inherit;
+  }
+
+  button,
+  a,
+  input,
+  select,
+  textarea {
+    touch-action: manipulation;
+  }
+
+  input,
+  select,
+  textarea {
+    font-size: 16px;
+  }
+
+  @media (min-width: 640px) {
+    input,
+    select,
+    textarea {
+      font-size: 0.875rem;
+    }
   }
 }
 
@@ -29,11 +66,11 @@
   }
 
   .button-primary {
-    @apply inline-flex h-11 items-center justify-center gap-2 rounded-md bg-app-primary px-5 text-sm font-bold text-white shadow-sm transition duration-200 hover:-translate-y-0.5 hover:bg-app-primaryStrong hover:shadow-panel active:translate-y-0;
+    @apply inline-flex min-h-11 items-center justify-center gap-2 rounded-md bg-app-primary px-5 py-2 text-sm font-bold text-white shadow-sm transition duration-200 hover:-translate-y-0.5 hover:bg-app-primaryStrong hover:shadow-panel active:translate-y-0;
   }
 
   .button-secondary {
-    @apply inline-flex h-11 items-center justify-center gap-2 rounded-md border border-app-line bg-white px-5 text-sm font-bold text-app-body transition duration-200 hover:-translate-y-0.5 hover:border-app-primary hover:text-app-primary active:translate-y-0;
+    @apply inline-flex min-h-11 items-center justify-center gap-2 rounded-md border border-app-line bg-white px-5 py-2 text-sm font-bold text-app-body transition duration-200 hover:-translate-y-0.5 hover:border-app-primary hover:text-app-primary active:translate-y-0;
   }
 
   .input-like {
@@ -45,7 +82,7 @@
   }
 
   .page-content {
-    @apply animate-rise px-6 py-6 lg:px-8;
+    @apply animate-rise px-0 py-0 sm:px-0 sm:py-0;
   }
 
   .muted-label {

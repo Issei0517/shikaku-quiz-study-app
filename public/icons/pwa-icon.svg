@@ -1,0 +1,8 @@
+<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 512 512" role="img" aria-label="資格問題">
+  <rect width="512" height="512" rx="112" fill="#2563eb"/>
+  <path fill="#dbeafe" d="M144 128c0-17.7 14.3-32 32-32h176c17.7 0 32 14.3 32 32v256c0 17.7-14.3 32-32 32H176c-17.7 0-32-14.3-32-32V128z"/>
+  <path fill="#ffffff" d="M184 144h144c8.8 0 16 7.2 16 16v192c0 8.8-7.2 16-16 16H184c-8.8 0-16-7.2-16-16V160c0-8.8 7.2-16 16-16z"/>
+  <path fill="#1d4ed8" d="M208 192h96v24h-96v-24zm0 64h96v24h-96v-24zm0 64h64v24h-64v-24z"/>
+  <circle cx="352" cy="352" r="72" fill="#0f766e"/>
+  <path fill="none" stroke="#ffffff" stroke-linecap="round" stroke-linejoin="round" stroke-width="28" d="m318 352 24 24 48-56"/>
+</svg>
